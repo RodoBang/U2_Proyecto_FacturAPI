@@ -37,12 +37,11 @@ async function createCustomer(user) {
       },
       phone: user.telefono
     });
-  } 
+  }
 
 
   async function deleteCustomer(facturapiId) {
     return await facturapi.customers.del(facturapiId);
   }
   
-
 module.exports = { facturapi, createProduct, createCustomer, updateCustomer, deleteCustomer };
