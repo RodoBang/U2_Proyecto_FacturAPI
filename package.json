@@ -11,6 +11,8 @@
   "description": "",
   "dependencies": {
     "apollo-server": "^3.13.0",
+    "facturapi": "^4.3.0",
+    "mongodb": "^6.10.0",
     "mongoose": "^8.8.0"
   }
 }
