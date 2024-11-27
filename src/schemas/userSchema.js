@@ -2,11 +2,19 @@
 const { gql } = require('apollo-server');
 
 const userTypeDefs = gql`
+  type Direccion {
+    calle: String!
+    colonia: String
+    municipio: String
+    estado: String
+    zip: String!
+  }
+
   type User {
     _id: ID!
     nombreCompleto: String!
     email: String!
-    direccion: String
+    direccion: Direccion
     telefono: String
     fechaRegistro: String
     tipoUsuario: String
@@ -20,27 +28,33 @@ const userTypeDefs = gql`
 
   type Mutation {
     createUser(
-    nombreCompleto: String!,
-    email: String!,
-    password: String!,
-    direccion: String,
-    telefono: String,
-    tipoUsuario: String,
-    metodoPagoPreferido: [String],
-    rfc: String
-  ): User
+      nombreCompleto: String!,
+      email: String!,
+      password: String!,
+      direccion: DireccionInput!,
+      telefono: String,
+      tipoUsuario: String
+    ): User
 
     updateUser(
       _id: ID!,
       nombreCompleto: String,
       email: String,
-      direccion: String,
+      direccion: DireccionInput,
       telefono: String,
       tipoUsuario: String,
       metodoPagoPreferido: [String]
     ): User
 
     deleteUser(_id: ID!): User
+  }
+
+  input DireccionInput {
+    calle: String!
+    colonia: String
+    municipio: String
+    estado: String
+    zip: String!
   }
 `;
 

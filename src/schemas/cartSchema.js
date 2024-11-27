@@ -14,8 +14,22 @@ const cartTypeDefs = gql`
     iva: Float
     total: Float
     estatus: String
+    paymentStatus: String
+    facturaId: String # ID de la factura generada
     fecha_creacion: String
     fecha_cierre: String
+  }
+
+  type PagoRespuesta {
+    message: String
+    paymentId: String
+    carrito: Cart
+  }
+
+  type FacturaRespuesta {
+    message: String
+    facturaId: String
+    facturaUrl: String
   }
 
   type Query {
@@ -28,7 +42,8 @@ const cartTypeDefs = gql`
     EliminarProd(id_carrito: ID!, productoId: ID!): Cart
     ActualizarCarrito(id_carrito: ID!): Cart
     CrearCarrito(usuario: ID!): Cart
-    CerrarCarrito(id_carrito: ID!): Cart
+    ProcesarPagoYCerrarCarrito(id_carrito: ID!, paymentMethodId: String!): PagoRespuesta
+    EmitirFactura(id_carrito: ID!): FacturaRespuesta # Nueva mutación para generar facturas
   }
 `;
 

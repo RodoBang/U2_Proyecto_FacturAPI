@@ -11,9 +11,13 @@
   "description": "",
   "dependencies": {
     "apollo-server": "^3.13.0",
+    "cloudinary": "^2.5.1",
     "facturapi": "^4.3.0",
+    "firebase-admin": "^13.0.1",
+    "googleapis": "^144.0.0",
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.0",
-    "node-mailjet": "^6.0.6"
+    "node-mailjet": "^6.0.6",
+    "stripe": "^17.4.0"
   }
 }
