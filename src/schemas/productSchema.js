@@ -17,37 +17,38 @@ const typeDefs = gql`
     brand: String!
     stock: Int!
     creationDate: String
-    imgs: [String],
+    imgs: [String]
     facturapiid: String
   }
 
   type Query {
     products: [Product]
+    product(_id: ID!): Product  # Agregado: obtener un producto específico
   }
 
   type Mutation {
     createProduct(
       name: String!,
-      description: String,
+      description: String!,
       price: Float!,
-      category: Category,
-      brand: String,
-      stock: Int,
-      imgs: [String]
+      category: Category!,
+      brand: String!,
+      stock: Int!,
+      imgs: [String],
       facturapiid: String
     ): Product
 
     updateProduct(
-  _id: ID!,
-  name: String,
-  description: String,
-  price: Float,
-  category: Category,
-  brand: String,
-  stock: Int,
-  imgs: [String],
-  facturapiid: String
-): Product
+      _id: ID!,
+      name: String,
+      description: String,
+      price: Float,
+      category: Category,
+      brand: String,
+      stock: Int,
+      imgs: [String],
+      facturapiid: String
+    ): Product
 
     deleteProduct(_id: ID!): Product
   }

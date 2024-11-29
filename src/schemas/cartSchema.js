@@ -40,10 +40,15 @@ const cartTypeDefs = gql`
   type Mutation {
     AgregarProd(id_carrito: ID!, productoId: ID!, cantidad: Int!): Cart
     EliminarProd(id_carrito: ID!, productoId: ID!): Cart
-    ActualizarCarrito(id_carrito: ID!): Cart
+    ActualizarCarrito(id_carrito: ID!, productos: [ProductoCarritoInput]!): Cart
     CrearCarrito(usuario: ID!): Cart
     ProcesarPagoYCerrarCarrito(id_carrito: ID!, paymentMethodId: String!): PagoRespuesta
     EmitirFactura(id_carrito: ID!): FacturaRespuesta # Nueva mutación para generar facturas
+  }
+
+  input ProductoCarritoInput {
+  productoId: ID!
+  cantidad: Int!
   }
 `;
 

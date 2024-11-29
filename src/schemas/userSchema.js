@@ -1,4 +1,3 @@
-// src/schemas/userSchema.js
 const { gql } = require('apollo-server');
 
 const userTypeDefs = gql`
@@ -23,7 +22,11 @@ const userTypeDefs = gql`
   }
 
   type Query {
-    users: [User]
+    # Lista de todos los usuarios
+    getAllUsers: [User]
+
+    # Obtener un usuario específico por su ID
+    getUserById(_id: ID!): User
   }
 
   type Mutation {

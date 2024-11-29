@@ -38,11 +38,20 @@ const cartResolvers = {
       return await Cart.findById(id_carrito).populate('productos.producto');
     },
     EliminarProd: async (_, { id_carrito, productoId }) => {
+      // Buscar el carrito
       const cart = await Cart.findById(id_carrito);
-
+      if (!cart) throw new Error('Carrito no encontrado.');
+    
+      // Filtrar el producto a eliminar
       cart.productos = cart.productos.filter((item) => !item.producto.equals(productoId));
+    
+      // Actualizar los totales del carrito después de eliminar el producto
       await updateCartTotals(cart);
+    
+      // Guardar el carrito actualizado
       await cart.save();
+    
+      // Retornar el carrito actualizado
       return await Cart.findById(id_carrito).populate('productos.producto');
     },
     ProcesarPagoYCerrarCarrito: async (_, { id_carrito, paymentMethodId }) => {
@@ -142,6 +151,33 @@ const cartResolvers = {
     throw new Error('Error procesando el pago: ' + error.message);
 }
     },
+    // Nueva mutación: Actualizar carrito
+    ActualizarCarrito: async (_, { id_carrito, productos }) => {
+      const cart = await Cart.findById(id_carrito);
+      if (!cart) throw new Error('Carrito no encontrado.');
+    
+      // Iteramos sobre los productos que nos pasan
+      for (const { productoId, cantidad } of productos) {
+        const existingProduct = cart.productos.find((item) => item.producto.equals(productoId));
+    
+        if (existingProduct) {
+          // Si el producto ya existe, actualizamos la cantidad
+          existingProduct.cantidad = cantidad;
+        } else {
+          // Si no existe, agregamos el producto con la cantidad especificada
+          cart.productos.push({ producto: productoId, cantidad });
+        }
+      }
+    
+      // Actualizamos los totales del carrito
+      await updateCartTotals(cart);
+    
+      // Guardamos los cambios en el carrito
+      await cart.save();
+    
+      // Devolvemos el carrito actualizado
+      return await Cart.findById(id_carrito).populate('productos.producto');
+    },
     EmitirFactura: async (_, { id_carrito }) => {
       const cart = await Cart.findById(id_carrito).populate('usuario').populate('productos.producto');
       if (!cart) {
@@ -235,23 +271,25 @@ const cartResolvers = {
         console.error('Error generando factura:', error.message || error);
         throw new Error('No se pudo generar la factura. Intenta nuevamente.');
       }
-    },
-
-    
-    
-    
-    
-        
+    },    
   },
 };
 
 // Función para actualizar totales
 async function updateCartTotals(cart) {
   let subtotal = 0;
+
   for (const item of cart.productos) {
+    // Verificamos si el producto existe en la base de datos
     const product = await Product.findById(item.producto);
+    if (!product) {
+      throw new Error(`Producto con ID ${item.producto} no encontrado.`);
+    }
+
+    // Si el producto existe, sumamos el precio * cantidad al subtotal
     subtotal += product.price * item.cantidad;
   }
+
   cart.subtotal = subtotal;
   cart.iva = subtotal * 0.16; // IVA del 16%
   cart.total = cart.subtotal + cart.iva;
