@@ -13,6 +13,7 @@ async function createProduct(product){
     return await facturapi.products.create(facturapiProduct);
 };
 
+
 async function createCustomer(user) {
   return await facturapi.customers.create({
     legal_name: user.nombreCompleto, // Asegúrate de que este campo se envíe
