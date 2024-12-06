@@ -1,0 +1,272 @@
+CLIENTES
+mutation {
+  createUser(
+    nombreCompleto: "Juan Pérez",
+    email: "maicolero942@gmail.com",
+    password: "123456",
+    direccion: "Calle Falsa 123",
+    telefono: "5551234567",
+    tipoUsuario: "cliente"
+  ) {
+    _id
+    nombreCompleto
+    email
+  }
+}
+
+
+mutation {
+  updateUser(
+    _id: "67466757ef23b9427fd5c62e",   
+    nombreCompleto: "Juan Pérez Actualizado", 
+    email: "nuevoemail@example.com", 
+    direccion: {
+      calle: "Calle Falsa 456",
+      colonia: "Colonia 1",
+      municipio: "Tepic",
+      estado: "Nayarit",
+      zip: "63173"
+    },
+    telefono: "5559876543", 
+    tipoUsuario: "cliente"    
+  ) {
+    _id
+    nombreCompleto
+    email
+    direccion {
+      calle
+      colonia
+      municipio
+      estado
+      zip
+    }
+    telefono
+    tipoUsuario
+  }
+}
+
+
+mutation {
+  deleteUser(_id: "67466757ef23b9427fd5c62e") {
+    _id
+    nombreCompleto
+    email
+    direccion {
+      calle
+      colonia
+      municipio
+      estado
+      zip
+    }
+    telefono
+    tipoUsuario
+  }
+}
+
+
+query {
+  getAllUsers {
+    _id
+    nombreCompleto
+    email
+    direccion {
+      calle
+      colonia
+      municipio
+      estado
+      zip
+    }
+    telefono
+    tipoUsuario
+  }
+}
+
+
+query {
+  getUserById(_id: "6746aab0d9cdd7745e0151b3") {
+    _id
+    nombreCompleto
+    email
+    direccion {
+      calle
+      colonia
+      municipio
+      estado
+      zip
+    }
+    telefono
+    tipoUsuario
+  }
+}
+
+---------------------------------------------------------------------------------------
+PRODUCTOS
+mutation {
+  createProduct(
+    name: "Laptop Lenovo",
+    description: "Laptop Lenovo de última generación",
+    price: 13000,
+    category: ELECTRONICS,
+    brand: "HP",
+    stock: 10,
+    imgs: ["https://example.com/laptop-hp.jpg"]
+  ) {
+    _id
+    name
+    price
+    stock
+  }
+}
+
+mutation {
+  updateProduct(
+    _id: "674667b8ef23b9427fd5c630",  
+    name: "Laptop HP 2025",           
+    price: 21000,                     
+    stock: 20,                       
+    imgs: ["https://example.com/laptop-hp-2024.jpg"] 
+  ) {
+    _id
+    name
+    price
+    stock
+    imgs
+  }
+}
+
+mutation {
+  deleteProduct(_id: "674667b8ef23b9427fd5c630") {  
+    _id
+    name
+  }
+}
+
+query {
+  products {
+    _id
+    name
+    description
+    price
+    category
+    brand
+    stock
+    imgs
+  }
+}
+
+query {
+  product(_id: "60c72b1f9d1f3f3e4d6b38fa") {
+    _id
+    name
+    description
+    price
+    category
+    brand
+    stock
+    imgs
+  }
+}
+
+------------------------------------------------------------------------------------------
+CARRITO
+mutation {
+  CrearCarrito(usuario: "6746aab0d9cdd7745e0151b3") {
+    _id
+    usuario {
+      nombreCompleto
+    }
+    productos {
+      producto {
+        name
+      }
+      cantidad
+    }
+  }
+}
+
+mutation {
+  AgregarProd(id_carrito: "67496326a293984330e88b60", productoId: "67496308a293984330e88b5d", cantidad: 1) {
+    _id
+    productos {
+      producto {
+        name
+        price
+      }
+      cantidad
+    }
+    subtotal
+    iva
+    total
+  }
+}
+
+
+mutation {
+  ActualizarCarrito(
+    id_carrito: "67496326a293984330e88b60", 
+    productos: [
+      { productoId: "674962f9a293984330e88b5b", cantidad: 3 },
+      { productoId: "67496308a293984330e88b5d", cantidad: 2 }
+    ]
+  ) {
+    _id
+    productos {
+      producto {
+        name
+        price
+      }
+      cantidad
+    }
+    subtotal
+    iva
+    total
+  }
+}
+
+mutation {
+  EliminarProd(id_carrito: "67496326a293984330e88b60", productoId: "67496308a293984330e88b5d") {
+    _id
+    productos {
+      producto {
+        name
+        price
+      }
+      cantidad
+    }
+    subtotal
+    iva
+    total
+  }
+}
+
+mutation {
+  ProcesarPagoYCerrarCarrito(id_carrito: "67496326a293984330e88b60", paymentMethodId: "pm_card_visa") {
+    message
+    paymentId
+    carrito {
+      _id
+      total
+      paymentStatus
+      estatus
+      productos {
+        producto {
+          name
+        }
+        cantidad
+      }
+    }
+  }
+}
+
+mutation {
+  EmitirFactura(id_carrito: "ID_DEL_CARRITO") {
+    message
+    facturaId
+    facturaUrl
+  }
+}
+
+
+
+
+

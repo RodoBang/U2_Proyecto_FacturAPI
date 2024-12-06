@@ -190,24 +190,27 @@ const cartResolvers = {
       try {
         const user = cart.usuario;
     
-        // Formatear los productos del carrito para FacturAPI
-        const items = cart.productos.map((item) => ({
-          quantity: item.cantidad,
-          product: {
-            description: item.producto.name,
-            product_key: '60131324', // Ajusta según el producto
-            price: item.producto.price,
-          },
-        }));
+        // Calcular precios unitarios con IVA
+        const items = cart.productos.map((item) => {
+          const priceWithIVA = item.producto.price * 1.16; // Precio con IVA incluido
+          return {
+            quantity: item.cantidad,
+            product: {
+              description: item.producto.name,
+              product_key: '60131324', // Clave de producto estándar
+              price: priceWithIVA, // Precio con IVA
+            },
+          };
+        });
     
         // Crear factura en FacturAPI
-        console.log('Generando factura como borrador en FacturAPI...');
+        console.log('Generando factura en FacturAPI...');
         const factura = await facturapi.invoices.create({
           customer: {
             legal_name: user.nombreCompleto,
             email: user.email,
-            tax_id: 'XAXX010101000', // RFC genérico
-            tax_system: '601', // Régimen fiscal
+            tax_id: user.rfc || 'XAXX010101000', // RFC genérico si no se proporciona uno real
+            tax_system: '601', // Régimen fiscal estándar
             address: {
               street: user.direccion.calle || '',
               zip: String(user.direccion.zip) || '',
@@ -216,31 +219,18 @@ const cartResolvers = {
             },
             phone: user.telefono || '',
           },
-          items,
-          payment_form: '03', // Dinero electrónico
-          folio_number: Math.floor(Math.random() * 10000),
-          series: 'F',
+          items, // Productos con precios y cantidades
+          payment_form: '03', // Transferencia electrónica
+          folio_number: Math.floor(Math.random() * 10000), // Generar folio único
+          series: 'F', // Serie de la factura
         });
     
-        console.log(`Factura generada: ${factura.id}`);
-    
-        // Copiar a borrador si la factura no es un borrador
-        let draftFactura = factura;
-        if (factura.status !== 'draft') {
-          console.log('Convirtiendo la factura a borrador...');
-          draftFactura = await facturapi.invoices.copyToDraft(factura.id);
-          console.log(`Factura convertida a borrador: ${draftFactura.id}`);
-        }
-    
-        // Timbrar el borrador
-        console.log('Timbrando factura...');
-        const facturaTimbrada = await facturapi.invoices.stampDraft(draftFactura.id);
-        console.log(`Factura timbrada exitosamente: ${facturaTimbrada.id}`);
+        console.log(`Factura generada y timbrada: ${factura.id}`);
     
         // Descargar el PDF de la factura
         console.log('Descargando PDF de la factura...');
-        const pdfStream = await facturapi.invoices.downloadPdf(facturaTimbrada.id);
-        const localPath = `./factura-${facturaTimbrada.id}.pdf`;
+        const pdfStream = await facturapi.invoices.downloadPdf(factura.id);
+        const localPath = `./factura-${factura.id}.pdf`;
         const pdfFile = fs.createWriteStream(localPath);
     
         await new Promise((resolve, reject) => {
@@ -264,14 +254,18 @@ const cartResolvers = {
         // Retornar el resultado
         return {
           message: 'Factura generada, timbrada y almacenada exitosamente en Cloudinary.',
-          facturaId: facturaTimbrada.id,
+          facturaId: factura.id,
           facturaUrl: cloudinaryUrl,
         };
       } catch (error) {
         console.error('Error generando factura:', error.message || error);
         throw new Error('No se pudo generar la factura. Intenta nuevamente.');
       }
-    },    
+    },
+    
+    
+    
+       
   },
 };
 
