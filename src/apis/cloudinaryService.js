@@ -2,9 +2,9 @@ const cloudinary = require('cloudinary').v2;
 
 // Configurar Cloudinary
 cloudinary.config({
-  cloud_name: 'delu6tduu', // Reemplaza con tu Cloud Name
-  api_key: '825461879386623',       // Reemplaza con tu API Key
-  api_secret: 'NaALoYH80Lh3jlqXzH_DZ5sJBiE', // Reemplaza con tu API Secret
+  cloud_name: 'dgj226cpa', // Reemplaza con tu Cloud Name
+  api_key: '455557459115415',       // Reemplaza con tu API Key
+  api_secret: 'Gl7b5MNQEFF2Myg7j-PjboqoCOc', // Reemplaza con tu API Secret
 });
 
 async function subirArchivoCloudinary(rutaArchivo) {
